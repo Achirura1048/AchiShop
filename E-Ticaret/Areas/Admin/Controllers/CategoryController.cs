@@ -1,19 +1,21 @@
-﻿using E_Ticaret.Data;
+﻿using Achi.DataAccess.Repository.IRepository;
+using E_Ticaret.Data;
 using E_Ticaret.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace E_Ticaret.Controllers
+namespace E_Ticaret.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class CategoryController : Controller
     {
-        private readonly AppDbContext _db;
-        public CategoryController(AppDbContext db)
+        private readonly IUnitOfWork _UoW;
+        public CategoryController(IUnitOfWork UoW)
         {
-            _db = db;
+            _UoW = UoW;
         }
         public IActionResult Index()
         {
-            List<Category> Ctg_List = _db.Categories.ToList();
+            List<Category> Ctg_List = _UoW.Category.GetAll().ToList();
             return View(Ctg_List);
         }
 
@@ -25,15 +27,15 @@ namespace E_Ticaret.Controllers
         [HttpPost]
         public IActionResult Create(Category obj)
         {
-            
+
             if (ModelState.IsValid)
             {
-                _db.Categories.Add(obj);
-                _db.SaveChanges();
+                _UoW.Category.Add(obj);
+                _UoW.Save();
                 TempData["Success"] = obj.Name + " Kategorisi Başarıyla Oluşturuldu";
                 return View();
             }
-            
+
             return View();
         }
 
@@ -44,7 +46,7 @@ namespace E_Ticaret.Controllers
                 return NotFound();
             }
 
-            Category? categoryid = _db.Categories.First(i=>i.ID==id);
+            Category? categoryid = _UoW.Category.Get(i => i.ID == id);
 
             if (categoryid == null)
             {
@@ -60,13 +62,13 @@ namespace E_Ticaret.Controllers
 
             if (ModelState.IsValid)
             {
-                _db.Categories.Update(obj);
-                _db.SaveChanges();
+                _UoW.Category.Update(obj);
+                _UoW.Save();
                 TempData["Success"] = obj.Name + " Kategorisi Başarıyla Güncellendi";
                 return RedirectToAction("Index");
             }
 
-            
+
             return View();
         }
 
@@ -77,7 +79,7 @@ namespace E_Ticaret.Controllers
                 return NotFound();
             }
 
-            Category? categoryid = _db.Categories.First(i => i.ID == id);
+            Category? categoryid = _UoW.Category.Get(i => i.ID == id);
 
             if (categoryid == null)
             {
@@ -87,18 +89,18 @@ namespace E_Ticaret.Controllers
             return View(categoryid);
         }
 
-        [HttpPost , ActionName("Delete")]
+        [HttpPost, ActionName("Delete")]
         public IActionResult DeletePOST(int? id)
         {
-            Category? obj = _db.Categories.First(i => i.ID == id);
+            Category? obj = _UoW.Category.Get(i => i.ID == id);
 
             if (obj == null)
             {
                 return NotFound();
             }
 
-            _db.Categories.Remove(obj);
-            _db.SaveChanges();
+            _UoW.Category.Remove(obj);
+            _UoW.Save();
 
             TempData["Success"] = obj.Name + " Kategorisi Başarıyla Silindi";
             return RedirectToAction("Index");
