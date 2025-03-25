@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Achi.DataAccess.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Achi.DataAccess;
-using E_Ticaret.Data;
+using Achi.DataAccess.Data;
 using System.Linq.Expressions;
 namespace Achi.DataAccess.Repository
 {

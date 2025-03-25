@@ -1,6 +1,6 @@
 using Achi.DataAccess.Repository;
 using Achi.DataAccess.Repository.IRepository;
-using E_Ticaret.Data;
+using Achi.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Configuration;
@@ -36,5 +36,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
+
+
 
 app.Run();

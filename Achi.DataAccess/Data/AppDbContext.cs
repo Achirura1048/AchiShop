@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using E_Ticaret.Models;
+using Achi.Models;
 
-namespace E_Ticaret.Data
+namespace Achi.DataAccess.Data
 {
     public class AppDbContext : DbContext
     {
@@ -30,7 +30,8 @@ namespace E_Ticaret.Data
                 Price = 8.99,
                 Price50 = 8.49,
                 Price100 = 7.99,
-                //CategoryID = 3
+                CategoryID = 17,
+                Image = "placeholder.png"
             },
 
             new Product
@@ -44,7 +45,8 @@ namespace E_Ticaret.Data
                 Price = 14.99,
                 Price50 = 14.49,
                 Price100 = 13.99,
-                //CategoryID = 3
+                CategoryID = 15,
+                Image = "placeholder.png"
             },
 
             new Product
@@ -58,8 +60,9 @@ namespace E_Ticaret.Data
                 Price = 8.99,
                 Price50 = 8.49,
                 Price100 = 7.99,
+                CategoryID = 17,
+                Image = "placeholder.png"
 
-                //CategoryID = 3
             }
 
             );

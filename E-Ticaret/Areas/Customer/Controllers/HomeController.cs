@@ -1,21 +1,26 @@
+using System.Configuration;
 using System.Diagnostics;
-using E_Ticaret.Models;
+using Achi.Models;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.Extensions.Configuration;
 namespace E_Ticaret.Areas.Customer.Controllers
 {
     [Area("Customer")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IConfiguration _configuration;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger , IConfiguration configuration)
         {
             _logger = logger;
+            _configuration = configuration;
         }
 
         public IActionResult Index()
         {
+            var tinyMCEApiUrl = _configuration["TinyMCE:APIUrl"];
+            ViewBag.TinyMCEApiUrl = tinyMCEApiUrl;
             return View();
         }
 

@@ -1,7 +1,9 @@
 ﻿using Achi.DataAccess.Repository.IRepository;
-using E_Ticaret.Data;
-using E_Ticaret.Models;
+using Achi.Models;
+using Achi.Models.ViewModels;
+using Achi.DataAccess.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace E_Ticaret.Areas.Admin.Controllers
 {
@@ -9,38 +11,100 @@ namespace E_Ticaret.Areas.Admin.Controllers
     public class ProductController : Controller
     {
         private readonly IUnitOfWork _UoW;
-        public ProductController(IUnitOfWork UoW)
+        private readonly IWebHostEnvironment _WHE;
+        public ProductController(IUnitOfWork UoW , IWebHostEnvironment WHE)
         {
             _UoW = UoW;
+            _WHE = WHE;
         }
         public IActionResult Index()
         {
             List<Product> Prd_List = _UoW.Product.GetAll().ToList();
+
             return View(Prd_List);
         }
 
-        public IActionResult Create()
+        public IActionResult Upsert(int? id)
         {
-            return View();
+
+
+            ProductVM productVM = new()
+            {
+                CategoryList = _UoW.Category.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.ID.ToString()
+                }),
+
+                Product = new Product()
+            };
+            if (id == null || id == 0)
+            {
+                return View(productVM);
+            }
+
+            else
+            {
+                productVM.Product = _UoW.Product.Get(i => i.ID == id);
+                return View(productVM);
+            }
+
+            
         }
 
         [HttpPost]
-        public IActionResult Create(Product obj)
+        public IActionResult Upsert(ProductVM obj, IFormFile? file)
         {
-
-
             if (ModelState.IsValid)
-            {   
-                    _UoW.Product.Add(obj);
-                    _UoW.Save();
-                    TempData["Success"] = obj.Title + " Kategorisi Başarıyla Oluşturuldu";
-                    return View();
+            {
+                string webRootPath = _WHE.WebRootPath;
+
+                if(file != null)
+                {
+                    string filename = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    string ProductPath = Path.Combine(webRootPath, @"images\product");
+
+                    using (var fileStream = new FileStream(Path.Combine(ProductPath, filename), FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+
+                    obj.Product.Image = @"\images\product\" + filename;
+                }
+
+                if (obj.Product.ID == 0)
+                {             
+                    TempData["Success"] = obj.Product.Title + " başarıyla oluşturuldu.";
+                }
+                else
+                { 
+                    TempData["Success"] = obj.Product.Title + " başarıyla güncellendi.";
+                }
+
+                
+                _UoW.Save();
+                return RedirectToAction("Index");
+                /*return View(new ProductVM
+                {
+                    CategoryList = _UoW.Category.GetAll().Select(u => new SelectListItem
+                    {
+                        Text = u.Name,
+                        Value = u.ID.ToString()
+                    }),
+                    Product = new Product()
+                });*/
             }
 
-            return View();
+            /*obj.CategoryList = _UoW.Category.GetAll().Select(u => new SelectListItem
+            {
+                Text = u.Name,
+                Value = u.ID.ToString()
+            });*/
+
+            return View(obj);
         }
 
-        public IActionResult Edit(int? id)
+       /* public IActionResult Edit(int? id)
         {
             if (id == null || id == 0)
             {
@@ -72,7 +136,7 @@ namespace E_Ticaret.Areas.Admin.Controllers
 
             return View();
         }
-
+       */
         public IActionResult Delete(int? id)
         {
             if (id == null || id == 0)

@@ -1,4 +1,4 @@
-namespace E_Ticaret.Models
+namespace Achi.Models
 {
     public class ErrorViewModel
     {

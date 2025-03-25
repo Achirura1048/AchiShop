@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_Ticaret.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250316151320_rangeremoved")]
-    partial class rangeremoved
+    [Migration("20250318033544_addedforeignkeyforcategory")]
+    partial class addedforeignkeyforcategory
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -76,6 +76,9 @@ namespace E_Ticaret.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("CategoryID")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -102,6 +105,8 @@ namespace E_Ticaret.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("CategoryID");
+
                     b.ToTable("Products");
 
                     b.HasData(
@@ -109,6 +114,7 @@ namespace E_Ticaret.Migrations
                         {
                             ID = 1,
                             Author = "Ray Bradbury",
+                            CategoryID = 17,
                             Description = "Kitapların yasaklandığı ve itfaiyecilerin onları yakmakla görevli olduğu bir toplumda, Guy Montag bu düzeni sorgulamaya başlar. Gerçeği arayışa çıktıkça, özgürlüğün ve bilginin gerçek değerini keşfeder.",
                             ISBN = "9783060311354",
                             ListPrice = 9.9900000000000002,
@@ -121,6 +127,7 @@ namespace E_Ticaret.Migrations
                         {
                             ID = 2,
                             Author = "Agatha Christie",
+                            CategoryID = 15,
                             Description = "Roger Ackroyd, aldığı bir mektupla büyük bir sırrı öğrenmesinin ardından evinde ölü bulunur. Emekli dedektif Hercule Poirot, kasabanın derinlerine gizlenmiş sırları açığa çıkararak katili bulmaya çalışır.",
                             ISBN = "9780006167921",
                             ListPrice = 15.99,
@@ -133,6 +140,7 @@ namespace E_Ticaret.Migrations
                         {
                             ID = 3,
                             Author = "Anthony Burgess",
+                            CategoryID = 17,
                             Description = "Şiddet ve suçla dolu bir gelecekte, genç Alex ve çetesi acımasızca eğlenirken, yakalandığında devletin onu “iyileştirmek” için uyguladığı deneysel bir yönteme maruz kalır. Ancak, özgür iradenin yok edildiği bu süreç, insan doğası ve ahlaki seçimler üzerine derin sorular ortaya çıkarır.",
                             ISBN = "9780393089134",
                             ListPrice = 9.9900000000000002,
@@ -141,6 +149,17 @@ namespace E_Ticaret.Migrations
                             Price50 = 8.4900000000000002,
                             Title = "Otomatik Portakal"
                         });
+                });
+
+            modelBuilder.Entity("E_Ticaret.Models.Product", b =>
+                {
+                    b.HasOne("E_Ticaret.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
                 });
 #pragma warning restore 612, 618
         }

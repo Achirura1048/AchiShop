@@ -1,6 +1,6 @@
 ﻿using Achi.DataAccess.Repository.IRepository;
-using E_Ticaret.Data;
-using E_Ticaret.Models;
+using Achi.Models;
+using Achi.DataAccess.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace E_Ticaret.Areas.Admin.Controllers

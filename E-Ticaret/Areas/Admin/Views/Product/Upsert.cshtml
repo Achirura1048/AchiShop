@@ -1,0 +1,152 @@
+﻿@model ProductVM
+
+<div class="border p-3 mt-4 text-white mb-3">
+    <div class="row pb-2">
+        <h1 class="text-white">@(Model.Product.ID!=0?"Kitap Detay Güncelle":"Kitap Ekle")</h1>
+        </hr>
+    </div>
+</div>
+
+<form method="post" asp-action="Upsert" enctype="multipart/form-data"> 
+    <input asp-for="Product.ID" hidden/>
+
+        <div class="mb-3">
+            <label asp-for="Product.Title"></label>
+            <input asp-for="Product.Title" type="text" class="form-control border-2 bg-black text-white" />
+            <span asp-validation-for="Product.Title" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Product.Author"></label>
+            <input asp-for="Product.Author" type="text" class="form-control border-2 bg-black text-white" />
+            <span asp-validation-for="Product.Author" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Product.Description"></label>
+            <textarea asp-for="Product.Description" type="textarea" class="form-control border-2 bg-black text-white" id="tiny"></textarea>
+            <span asp-validation-for="Product.Description" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Product.ISBN"></label>
+            <input asp-for="Product.ISBN" type="text" class="form-control border-2 bg-black text-white" />
+            <span asp-validation-for="Product.ISBN" class="text-danger"></span>
+        </div>
+
+
+        <div class="mb-3">
+            <label asp-for="Product.ListPrice"></label>
+            <input asp-for="Product.ListPrice" type="number" class="form-control border-2 bg-black text-white" oninput="updatePrices()" id="ListPrice" />
+            <span asp-validation-for="Product.ListPrice" class="text-danger"></span>
+        </div>
+
+        
+        <div class="mb-3">
+            <label asp-for="Product.Price"></label>
+            <input asp-for="Product.Price" type="number" class="form-control border-2 bg-black text-white" id="Price" disabled />
+            <input type="hidden" asp-for="Product.Price" id="PriceHidden" />
+        </div>
+
+
+        <div class="mb-3">
+            <label asp-for="Product.Price50"></label>
+            <input asp-for="Product.Price50" type="number" class="form-control border-2 bg-black text-white" id="Price50" disabled />
+            <input type="hidden" asp-for="Product.Price50" id="Price50Hidden" />
+            <span asp-validation-for="Product.Price50" class="text-danger"></span>
+        </div>
+
+
+        <div class="mb-3">
+            <label asp-for="Product.Price100"></label>
+            <input asp-for="Product.Price100" type="number" class="form-control border-2 bg-black text-white" id="Price100" disabled />
+            <input type="hidden" asp-for="Product.Price100" id="Price100Hidden" />
+            <span asp-validation-for="Product.Price100" class="text-danger"></span>
+        </div>
+
+
+        <div class="mb-3">
+            <label asp-for="Product.CategoryID"></label>
+            <select asp-for="Product.CategoryID" asp-items="@Model.CategoryList" class="form-select border-2 bg-black text-white">
+                <option disabled selected>Seçiniz</option>
+            </select>
+            <span asp-validation-for="Product.CategoryID" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Product.Image"></label>
+            <input asp-for="Product.Image" type="file" class="form-control border-2 bg-black text-white" />
+            
+        </div>
+
+        <script>
+            function updatePrices() {
+                    
+                var listPrice = document.getElementById('ListPrice').value;
+
+                if (!isNaN(listPrice)) {
+                    
+                    
+                    var price = (listPrice - (listPrice * 0.15)).toFixed(2);
+                    var price50 = (listPrice - (listPrice * 0.10)).toFixed(2);
+                    var price100 = (listPrice - (listPrice * 0.20)).toFixed(2);
+
+                 
+                   document.getElementById('Price').value = price;
+                   document.getElementById('Price50').value = price50;
+                   document.getElementById('Price100').value = price100;
+
+            
+                   document.getElementById('PriceHidden').value = price;
+                   document.getElementById('Price50Hidden').value = price50;
+                   document.getElementById('Price100Hidden').value = price100;
+                } 
+                
+                else {
+                    
+                    document.getElementById('Price').value = '';
+                    document.getElementById('Price50').value = '';
+                    document.getElementById('Price100').value = '';
+
+                    document.getElementById('PriceHidden').value = '';
+                    document.getElementById('Price50Hidden').value = '';
+                    document.getElementById('Price100Hidden').value = '';
+                }
+            }
+
+            
+            window.onload = function() {
+                updatePrices();
+            };
+        </script>
+
+    </div>
+
+    @if (Model.Product.ID != 0)
+    {
+        <button type="submit" class="btn btn-primary bg-black" style="width:150px">Güncelle</button>
+    }
+    else
+    {
+        <button type="submit" class="btn btn-primary bg-black" style="width:150px">Oluştur</button>
+    }
+    
+    <a asp-controller="Product" asp-action="Index" class="btn btn-primary bg-black" style="width:150px">
+        Listeye Dön
+    </a>
+</form>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+
+        <script>
+            tinymce.init({
+              selector: 'textarea#tiny',
+              skin: "oxide-dark",
+              content_css: "dark"
+            });
+        </script>
+    }
+
+}

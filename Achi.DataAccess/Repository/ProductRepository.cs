@@ -1,6 +1,6 @@
 ﻿using Achi.DataAccess.Repository.IRepository;
-using E_Ticaret.Data;
-using E_Ticaret.Models;
+using Achi.Models;
+using Achi.DataAccess.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
