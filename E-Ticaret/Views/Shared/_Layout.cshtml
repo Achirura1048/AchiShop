@@ -30,13 +30,16 @@
                             <a class="nav-link " asp-area="Customer" asp-controller="Home" asp-action="Index">Ana Sayfa</a>
                         </li>
 
-                        <li class="nav-item">
-                            <a class="nav-link " asp-area="Admin" asp-controller="Category" asp-action="Index">Kategoriler</a>
-                        </li>
+                        @if(User.IsInRole(SD.Role_Admin)){
+                            <li class="nav-item">
+                                <a class="nav-link " asp-area="Admin" asp-controller="Category" asp-action="Index">Kategoriler</a>
+                            </li>
 
-                        <li class="nav-item">
-                            <a class="nav-link " asp-area="Admin" asp-controller="Product" asp-action="Index">Ürünler</a>
-                        </li>
+                            <li class="nav-item">
+                                <a class="nav-link " asp-area="Admin" asp-controller="Product" asp-action="Index">Ürünler</a>
+                            </li>
+                        }
+
 
                         <li class="nav-item">
                             <a class="nav-link " asp-area="Customer" asp-controller="Home" asp-action="Privacy">Gizlilik</a>

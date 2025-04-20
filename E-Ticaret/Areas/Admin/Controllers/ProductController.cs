@@ -5,9 +5,12 @@ using Achi.DataAccess.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using Achi.Utility;
 namespace E_Ticaret.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = SD.Role_Admin)]  
     public class ProductController : Controller
     {
         private readonly IUnitOfWork _UoW;
