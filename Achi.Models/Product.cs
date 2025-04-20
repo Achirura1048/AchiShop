@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -55,8 +57,14 @@ namespace Achi.Models
         [ValidateNever]
         public Category Category { get; set; }
 
+        [AllowNull]
+        [NotMapped]
+        [ValidateNever]
+        public IFormFile ImageFile { get; set; }
         
-        public string Image { get; set; }
+        [AllowNull]
+        [ValidateNever]
+        public string? Image { get; set; }
 
     }
 }

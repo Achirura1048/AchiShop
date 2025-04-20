@@ -4,7 +4,7 @@ using Achi.Models.ViewModels;
 using Achi.DataAccess.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-
+using Microsoft.EntityFrameworkCore;
 namespace E_Ticaret.Areas.Admin.Controllers
 {
     [Area("Admin")]
@@ -19,8 +19,8 @@ namespace E_Ticaret.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-            List<Product> Prd_List = _UoW.Product.GetAll().ToList();
-
+            List<Product> Prd_List = _UoW.Product.GetAll(includeProperties:"Category")
+            .ToList();
             return View(Prd_List);
         }
 
@@ -53,31 +53,48 @@ namespace E_Ticaret.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Upsert(ProductVM obj, IFormFile? file)
+        public IActionResult Upsert(ProductVM obj)
         {
             if (ModelState.IsValid)
             {
                 string webRootPath = _WHE.WebRootPath;
+                string productPath = Path.Combine(webRootPath, "images", "product");
 
-                if(file != null)
+                if (!Directory.Exists(productPath))
                 {
-                    string filename = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                    string ProductPath = Path.Combine(webRootPath, @"images\product");
+                    Directory.CreateDirectory(productPath);
+                }
 
-                    using (var fileStream = new FileStream(Path.Combine(ProductPath, filename), FileMode.Create))
+                if (obj.Product.ImageFile != null)
+                {
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(obj.Product.ImageFile.FileName);
+                    string filePath = Path.Combine(productPath, fileName);
+
+                    if(!string.IsNullOrEmpty(obj.Product.Image))
                     {
-                        file.CopyTo(fileStream);
+                        var oldFilePath = Path.Combine(webRootPath, obj.Product.Image.TrimStart('\\'));
+                        if (System.IO.File.Exists(oldFilePath))
+                        {
+                            System.IO.File.Delete(oldFilePath);
+                        }
+                    }
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        obj.Product.ImageFile.CopyTo(fileStream);
                     }
 
-                    obj.Product.Image = @"\images\product\" + filename;
+                    obj.Product.Image = @"\images\product\" + fileName;
                 }
 
                 if (obj.Product.ID == 0)
-                {             
+                {   
+
+                    _UoW.Product.Add(obj.Product);
                     TempData["Success"] = obj.Product.Title + " başarıyla oluşturuldu.";
                 }
                 else
-                { 
+                {
+                    _UoW.Product.Update(obj.Product);
                     TempData["Success"] = obj.Product.Title + " başarıyla güncellendi.";
                 }
 
@@ -170,5 +187,14 @@ namespace E_Ticaret.Areas.Admin.Controllers
             TempData["Success"] = obj.Title + " Kategorisi Başarıyla Silindi";
             return RedirectToAction("Index");
         }
+
+        #region API CALLS
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            List<Product> Prd_List = _UoW.Product.GetAll(includeProperties: "Category").ToList();
+            return Json(new { data = Prd_List });
+        }
+        #endregion
     }
 }

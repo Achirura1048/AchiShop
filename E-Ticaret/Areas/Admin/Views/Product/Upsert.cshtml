@@ -8,76 +8,88 @@
 </div>
 
 <form method="post" asp-action="Upsert" enctype="multipart/form-data"> 
-    <input asp-for="Product.ID" hidden/>
+    <input type="hidden" asp-for="Product.ID" />
+    <input type="hidden" asp-for="Product.Image" />
 
-        <div class="mb-3">
-            <label asp-for="Product.Title"></label>
-            <input asp-for="Product.Title" type="text" class="form-control border-2 bg-black text-white" />
-            <span asp-validation-for="Product.Title" class="text-danger"></span>
+    <div class="row">
+            <div class="col-10">
+            <div class="mb-3">
+                <label asp-for="Product.Title"></label>
+                <input asp-for="Product.Title" type="text" class="form-control border-2 bg-black text-white" />
+                <span asp-validation-for="Product.Title" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Product.Author"></label>
+                <input asp-for="Product.Author" type="text" class="form-control border-2 bg-black text-white" />
+                <span asp-validation-for="Product.Author" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Product.Description"></label>
+                <textarea asp-for="Product.Description" type="textarea" class="form-control border-2 bg-black text-white" id="tiny"></textarea>
+                <span asp-validation-for="Product.Description" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Product.ISBN"></label>
+                <input asp-for="Product.ISBN" type="text" class="form-control border-2 bg-black text-white" />
+                <span asp-validation-for="Product.ISBN" class="text-danger"></span>
+            </div>
+
+
+            <div class="mb-3">
+                <label asp-for="Product.ListPrice"></label>
+                <input asp-for="Product.ListPrice" type="number" class="form-control border-2 bg-black text-white" oninput="updatePrices()" id="ListPrice" />
+                <span asp-validation-for="Product.ListPrice" class="text-danger"></span>
+            </div>
+
+
+            <div class="mb-3">
+                <label asp-for="Product.Price"></label>
+                <input asp-for="Product.Price" type="number" class="form-control border-2 bg-black text-white" id="Price" disabled />
+                <input type="hidden" asp-for="Product.Price" id="PriceHidden" />
+            </div>
+
+
+            <div class="mb-3">
+                <label asp-for="Product.Price50"></label>
+                <input asp-for="Product.Price50" type="number" class="form-control border-2 bg-black text-white" id="Price50" disabled />
+                <input type="hidden" asp-for="Product.Price50" id="Price50Hidden" />
+                <span asp-validation-for="Product.Price50" class="text-danger"></span>
+            </div>
+
+
+            <div class="mb-3">
+                <label asp-for="Product.Price100"></label>
+                <input asp-for="Product.Price100" type="number" class="form-control border-2 bg-black text-white" id="Price100" disabled />
+                <input type="hidden" asp-for="Product.Price100" id="Price100Hidden" />
+                <span asp-validation-for="Product.Price100" class="text-danger"></span>
+            </div>
+
+
+            <div class="mb-3">
+                <label asp-for="Product.CategoryID"></label>
+                <select asp-for="Product.CategoryID" asp-items="@Model.CategoryList" class="form-select border-2 bg-black text-white">
+                    <option disabled selected>Seçiniz</option>
+                </select>
+                <span asp-validation-for="Product.CategoryID" class="text-danger"></span>
+            </div>
+
+
+            <div class="mb-3">
+                <label asp-for="Product.ImageFile"></label>
+                <input asp-for="Product.ImageFile" type="file" class="form-control border-2 bg-black text-white" />
+                
+            </div>
+            </div>
+        <div class="col-2">
+            <img src="@Model.Product.Image" width="100%" />
         </div>
-
-        <div class="mb-3">
-            <label asp-for="Product.Author"></label>
-            <input asp-for="Product.Author" type="text" class="form-control border-2 bg-black text-white" />
-            <span asp-validation-for="Product.Author" class="text-danger"></span>
-        </div>
-
-        <div class="mb-3">
-            <label asp-for="Product.Description"></label>
-            <textarea asp-for="Product.Description" type="textarea" class="form-control border-2 bg-black text-white" id="tiny"></textarea>
-            <span asp-validation-for="Product.Description" class="text-danger"></span>
-        </div>
-
-        <div class="mb-3">
-            <label asp-for="Product.ISBN"></label>
-            <input asp-for="Product.ISBN" type="text" class="form-control border-2 bg-black text-white" />
-            <span asp-validation-for="Product.ISBN" class="text-danger"></span>
-        </div>
+    </div>
 
 
-        <div class="mb-3">
-            <label asp-for="Product.ListPrice"></label>
-            <input asp-for="Product.ListPrice" type="number" class="form-control border-2 bg-black text-white" oninput="updatePrices()" id="ListPrice" />
-            <span asp-validation-for="Product.ListPrice" class="text-danger"></span>
-        </div>
-
-        
-        <div class="mb-3">
-            <label asp-for="Product.Price"></label>
-            <input asp-for="Product.Price" type="number" class="form-control border-2 bg-black text-white" id="Price" disabled />
-            <input type="hidden" asp-for="Product.Price" id="PriceHidden" />
-        </div>
-
-
-        <div class="mb-3">
-            <label asp-for="Product.Price50"></label>
-            <input asp-for="Product.Price50" type="number" class="form-control border-2 bg-black text-white" id="Price50" disabled />
-            <input type="hidden" asp-for="Product.Price50" id="Price50Hidden" />
-            <span asp-validation-for="Product.Price50" class="text-danger"></span>
-        </div>
-
-
-        <div class="mb-3">
-            <label asp-for="Product.Price100"></label>
-            <input asp-for="Product.Price100" type="number" class="form-control border-2 bg-black text-white" id="Price100" disabled />
-            <input type="hidden" asp-for="Product.Price100" id="Price100Hidden" />
-            <span asp-validation-for="Product.Price100" class="text-danger"></span>
-        </div>
-
-
-        <div class="mb-3">
-            <label asp-for="Product.CategoryID"></label>
-            <select asp-for="Product.CategoryID" asp-items="@Model.CategoryList" class="form-select border-2 bg-black text-white">
-                <option disabled selected>Seçiniz</option>
-            </select>
-            <span asp-validation-for="Product.CategoryID" class="text-danger"></span>
-        </div>
-
-        <div class="mb-3">
-            <label asp-for="Product.Image"></label>
-            <input asp-for="Product.Image" type="file" class="form-control border-2 bg-black text-white" />
-            
-        </div>
+       
 
         <script>
             function updatePrices() {

@@ -21,7 +21,25 @@ namespace Achi.DataAccess.Repository
 
         public void Update(Product obj)
         {
-            _db.Products.Update(obj);
+            var objFromDb = _db.Products.FirstOrDefault(u => u.ID == obj.ID);
+
+            if (objFromDb != null)
+            {
+                objFromDb.Title = obj.Title;
+                objFromDb.ISBN = obj.ISBN;
+                objFromDb.Price = obj.Price;
+                objFromDb.Price50 = obj.Price50;
+                objFromDb.ListPrice = obj.ListPrice;
+                objFromDb.Price100 = obj.Price100;
+                objFromDb.Description = obj.Description;
+                objFromDb.CategoryID = obj.CategoryID;
+                objFromDb.Author = obj.Author;
+                if (obj.Image != null)
+                {
+                    objFromDb.Image = obj.Image;
+                }
+            }
+
         }
     }
 }
