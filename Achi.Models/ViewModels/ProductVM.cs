@@ -13,7 +13,8 @@ namespace Achi.Models.ViewModels
         public Product Product { get; set; } = new Product();
         [ValidateNever]
         public IEnumerable<SelectListItem> CategoryList { get; set; } = new List<SelectListItem>();
+        public IEnumerable<Product> RelatedProducts { get; set; }
 
-        
+
     }
 }
