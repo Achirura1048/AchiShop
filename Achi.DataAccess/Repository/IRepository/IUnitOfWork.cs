@@ -16,6 +16,9 @@ namespace Achi.DataAccess.Repository.IRepository
         IStateRepository State { get; }
         ICityRepository City { get; }
 
+        IApplicationUserRepository ApplicationUser { get; }
+        IShoppingCartRepository ShoppingCart { get; }
+
         Task SaveAsync();
 
         void Save();

@@ -71,6 +71,10 @@
                 <select asp-for="Input.Role" asp-items="@Model.Input.RoleList" class="form-select"></select>
             </div>
 
+            <div class="form-floating mb-3">
+                <select asp-for="Input.CompanyID" asp-items="@Model.Input.CompanyList" class="form-select" style="display:none"></select>
+            </div>
+
             <button id="registerSubmit" type="submit" class="w-100 btn btn-lg text-white bg-dark">Register</button>
         </form>
     </div>
@@ -108,4 +112,16 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            $('#Input_Role').change(function () {
+                var selection = $('#Input_Role option:selected').text();
+                if (selection === 'Company') {
+                    $('#Input_CompanyID').show();
+                } else {
+                    $('#Input_CompanyID').hide();
+                }
+            });
+        });
+    </script>
 }

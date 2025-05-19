@@ -43,7 +43,7 @@ namespace E_Ticaret.Areas.Admin.Controllers
             return View(viewModel);
         }
 
-        // GET
+        
         public IActionResult Upsert(int? id)
         {
             var vm = new CompanyUpsertVM();
@@ -59,7 +59,7 @@ namespace E_Ticaret.Areas.Admin.Controllers
                 if (vm.Company == null)
                     return NotFound();
 
-                // Country code (ISO2)
+                
                 if (vm.Company.CountryId > 0)
                 {
                     var country = _UoW.Country.Get(c => c.ID == vm.Company.CountryId);
@@ -67,7 +67,7 @@ namespace E_Ticaret.Areas.Admin.Controllers
                         vm.SelectedCountryCode = country.ISO2;
                 }
 
-                // State code
+                
                 if (vm.Company.StateId > 0)
                 {
                     var state = _UoW.State.Get(s => s.ID == vm.Company.StateId);
@@ -75,7 +75,7 @@ namespace E_Ticaret.Areas.Admin.Controllers
                         vm.SelectedStateCode = state.Code;
                 }
 
-                // City name from city ID
+                
                 if (vm.Company.CityId > 0)
                 {
                     var city = _UoW.City.Get(c => c.CityId == vm.Company.CityId);
@@ -84,31 +84,49 @@ namespace E_Ticaret.Areas.Admin.Controllers
                 }
             }
 
-            // Load countries dropdown list (async call forced sync here)
-            var countries = _cscService.GetCountriesAsync().Result;
-            vm.CountryList = countries.ToList();
 
-            // Load states if country selected
+            var countries = _cscService.GetCountriesAsync().Result;
+            vm.CountryList = countries.Select(c => new SelectListItem
+            {
+                Text = c.Text,
+                Value = c.Value,
+                Selected = (c.Value == vm.SelectedCountryCode)
+            }).ToList();
+
+
+
             if (!string.IsNullOrEmpty(vm.SelectedCountryCode))
             {
                 var states = _cscService.GetStatesAsync(vm.SelectedCountryCode).Result;
-                vm.StateList = states.ToList();
+                vm.StateList = states.Select(s => new SelectListItem
+                {
+                    Text = s.Text,
+                    Value = s.Value,
+                    Selected = (s.Value == vm.SelectedStateCode)
+                }).ToList();
             }
             else
             {
                 vm.StateList = new List<SelectListItem>();
             }
 
-            // Load cities if country and state selected
+
+
             if (!string.IsNullOrEmpty(vm.SelectedCountryCode) && !string.IsNullOrEmpty(vm.SelectedStateCode))
             {
                 var cities = _cscService.GetCitiesAsync(vm.SelectedCountryCode, vm.SelectedStateCode).Result;
-                vm.CityList = cities.ToList();
+                vm.CityList = cities.Select(c => new SelectListItem
+                {
+                    Text = c.Text,
+                    Value = c.Text,
+                    Selected = (c.Text == vm.SelectedCityName)
+                }).ToList();
             }
             else
             {
                 vm.CityList = new List<SelectListItem>();
             }
+
 
             return View(vm);
         }
@@ -173,38 +191,59 @@ namespace E_Ticaret.Areas.Admin.Controllers
                 _stateRepo.Add(state);
                 await _UoW.SaveAsync();
             }
-
             var selectedCityName = vm.SelectedCityName?.Trim();
+            City city = null;
 
-            var city = _cityRepo.Get(c =>
-                c.Name.ToLower() == selectedCityName.ToLower() &&
-                c.StateId == state.ID);
-
-            if (city == null && !string.IsNullOrEmpty(selectedCityName))
+            if (!string.IsNullOrWhiteSpace(selectedCityName))
             {
-                city = new City
+                city = _cityRepo.Get(c =>
+                    c.Name.ToLower() == selectedCityName.ToLower() &&
+                    c.StateId == state.ID);
+
+                if (city == null)
                 {
-                    Name = selectedCityName,
-                    StateId = state.ID
-                };
-                _cityRepo.Add(city);
-                await _UoW.SaveAsync();
+                    city = new City
+                    {
+                        Name = selectedCityName,
+                        StateId = state.ID
+                    };
+                    _cityRepo.Add(city);
+                    await _UoW.SaveAsync();
+                }
             }
 
-            
+
+
             vm.Company.CountryId = country.ID;
             vm.Company.StateId = state.ID;
-            vm.Company.CityId = city.CityId;
+            vm.Company.CityId = city?.CityId;
 
-            
+
             vm.Company.Name = vm.Company.Name?.Trim();
             vm.Company.Adress = vm.Company.Adress?.Trim();
             vm.Company.PhoneNumber = vm.Company.PhoneNumber?.Trim();
 
             if (vm.Company.ID == 0)
+            {
                 _UoW.Company.Add(vm.Company);
+            }
             else
-                _UoW.Company.Update(vm.Company);
+            {
+                var existingCompany = _UoW.Company.Get(c => c.ID == vm.Company.ID);
+                if (existingCompany == null)
+                    return NotFound();
+
+                
+                existingCompany.Name = vm.Company.Name;
+                existingCompany.Adress = vm.Company.Adress;
+                existingCompany.PhoneNumber = vm.Company.PhoneNumber;
+                existingCompany.CountryId = vm.Company.CountryId;
+                existingCompany.StateId = vm.Company.StateId;
+                existingCompany.CityId = vm.Company.CityId;
+
+                _UoW.Company.Update(existingCompany); 
+            }
+
 
             await _UoW.SaveAsync();
 
@@ -292,7 +331,7 @@ namespace E_Ticaret.Areas.Admin.Controllers
                     address = c.Adress,
                     country = c.Country.Name,
                     state = c.State.Name,
-                    city = c.City.Name
+                    city = c.City != null ? c.City.Name : "—"
                 });
 
             return Json(new { data = companies });

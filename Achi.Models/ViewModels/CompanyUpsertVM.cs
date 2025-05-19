@@ -14,8 +14,10 @@ namespace Achi.Models.ViewModels
         public Company Company { get; set; }
 
         public string SelectedCountryCode { get; set; } 
-        public string SelectedStateCode { get; set; }    
-        public string SelectedCityName { get; set; }      
+        public string SelectedStateCode { get; set; }
+
+        [ValidateNever]
+        public string? SelectedCityName { get; set; }      
 
         [ValidateNever]
 

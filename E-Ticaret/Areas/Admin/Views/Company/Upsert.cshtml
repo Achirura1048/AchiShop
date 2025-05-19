@@ -13,6 +13,7 @@
 
 <form asp-action="Upsert" method="post">
     @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Company.ID" />
 
     <div class="form-group">
         <label asp-for="Company.Name">Company Name</label>
@@ -20,9 +21,9 @@
         <span asp-validation-for="Company.Name" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
-        <label asp-for="Company.Adress">Company Address</label>
-        <input asp-for="Company.Adress" class="form-control" />
+    <div class="mb-3">
+        <label asp-for="Company.Adress"></label>
+        <textarea asp-for="Company.Adress" type="textarea" class="form-control border-2 bg-black text-white" id="tiny"></textarea>
         <span asp-validation-for="Company.Adress" class="text-danger"></span>
     </div>
 
@@ -51,6 +52,8 @@
     <div class="form-group">
         <label asp-for="SelectedCityName"></label>
         <select asp-for="SelectedCityName" asp-items="Model.CityList" class="form-control" id="SelectedCityName">
+            <option value="">No city</option>
+
             <option value="">Select City</option>
         </select>
         <span asp-validation-for="SelectedCityName" class="text-danger"></span>
