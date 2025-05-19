@@ -1,0 +1,32 @@
+﻿@model CompanyVM
+<div class="container">
+    <div class="row pt-4 pb-3">
+        <div class="col-6">
+            <h1 class="text-primary">Şirket Listesi</h1>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="Company" asp-action="Upsert" class="btn btn-primary">
+                <i class="bi bi-plus-square"></i> Yeni Şirket Ekle
+            </a>
+        </div>
+    </div>
+</div>
+
+
+<table id="tblData" class="table table-bordered table-striped table-dark" width="100%">
+    <thead>
+        <tr>
+            <th>Şirket Adı</th>
+            <th>Telefon</th>
+            <th>Ülke</th>
+            <th>Şehir</th>
+            <th>İlçe</th>
+            <th>Adres</th>
+            <th>İşlemler</th>
+        </tr>
+    </thead>
+</table>
+
+@section Scripts{
+    <script src="~/js/company.js"></script>
+}

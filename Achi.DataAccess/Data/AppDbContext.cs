@@ -7,6 +7,7 @@ namespace Achi.DataAccess.Data
 {
     public class AppDbContext : IdentityDbContext
     {
+
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
                 
@@ -17,13 +18,56 @@ namespace Achi.DataAccess.Data
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
+        public DbSet<Company> Companies { get; set; }
+
+        public DbSet<Country> Countries { get; set; }
+
+        public DbSet<State> States { get; set; }
+
+        public DbSet<City> Cities { get; set; }
+
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Category>().HasData(new Category { ID = 1, Name = "Action", DisplayOrder = 1 });
-            modelBuilder.Entity<Category>().HasData(new Category { ID = 2, Name = "Sci-Fi", DisplayOrder =2 });
-            modelBuilder.Entity<Category>().HasData(new Category { ID = 3, Name = "Fantasy", DisplayOrder = 3 });
+            modelBuilder.Entity<Company>()
+    .HasOne(c => c.Country)
+    .WithMany()
+    .HasForeignKey(c => c.CountryId)
+    .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Company>()
+                .HasOne(c => c.State)
+                .WithMany()
+                .HasForeignKey(c => c.StateId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Company>()
+                .HasOne(c => c.City)
+                .WithMany()
+                .HasForeignKey(c => c.CityId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            
+            modelBuilder.Entity<State>()
+                .HasOne(s => s.Country)
+                .WithMany(c => c.States)
+                .HasForeignKey(s => s.CountryId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<City>()
+                .HasOne(c => c.State)
+                .WithMany()
+                .HasForeignKey(c => c.StateId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+
+            modelBuilder.Entity<Category>().HasData(new Category { ID = 1, Name = "Action", DisplayOrder = 1 , SINAV = "sınav1" });
+            modelBuilder.Entity<Category>().HasData(new Category { ID = 2, Name = "Sci-Fi", DisplayOrder =2 , SINAV="sınav2"});
+            modelBuilder.Entity<Category>().HasData(new Category { ID = 3, Name = "Fantasy", DisplayOrder = 3 , SINAV="sınav3" });
             modelBuilder.Entity<Product>().HasData(
             new Product
             {
@@ -36,8 +80,9 @@ namespace Achi.DataAccess.Data
                 Price = 8.99,
                 Price50 = 8.49,
                 Price100 = 7.99,
-                CategoryID = 17,
-                Image = "placeholder.png"
+                CategoryID = 1,
+                Image = "placeholder.png",
+                
             },
 
             new Product
@@ -51,7 +96,7 @@ namespace Achi.DataAccess.Data
                 Price = 14.99,
                 Price50 = 14.49,
                 Price100 = 13.99,
-                CategoryID = 15,
+                CategoryID = 2,
                 Image = "placeholder.png"
             },
 
@@ -66,13 +111,15 @@ namespace Achi.DataAccess.Data
                 Price = 8.99,
                 Price50 = 8.49,
                 Price100 = 7.99,
-                CategoryID = 17,
+                CategoryID = 3,
                 Image = "placeholder.png"
 
             }
 
-            );
 
+
+            );
+            
         }
 
 

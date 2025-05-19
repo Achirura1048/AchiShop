@@ -1,0 +1,116 @@
+﻿@model Product
+<form method="post">
+    <div class="border p-3 mt-4 text-white mb-3">
+        <div class="row pb-2">
+            <h1 class="text-white">Kitap Sil</h1>
+            </hr>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Title"></label>
+            <input asp-for="Title" type="text" class="form-control border-2 bg-black text-white" disabled />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Author"></label>
+            <input asp-for="Author" type="text" class="form-control border-2 bg-black text-white" disabled />
+            <span asp-validation-for="Author" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Description"></label>
+            <input asp-for="Description" type="textarea" class="form-control border-2 bg-black text-white" disabled />
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="ISBN"></label>
+            <input asp-for="ISBN" type="text" class="form-control border-2 bg-black text-white" disabled />
+            <span asp-validation-for="ISBN" class="text-danger"></span>
+        </div>
+
+
+        <div class="mb-3">
+            <label asp-for="ListPrice"></label>
+            <input asp-for="ListPrice" type="number" class="form-control border-2 bg-black text-white" oninput="updatePrices()" id="ListPrice" disabled />
+            <span asp-validation-for="ListPrice" class="text-danger"></span>
+        </div>
+
+
+        <div class="mb-3">
+            <label asp-for="Price"></label>
+            <input asp-for="Price" type="number" class="form-control border-2 bg-black text-white" id="Price" disabled />
+            <input type="hidden" asp-for="Price" id="PriceHidden" />
+        </div>
+
+
+        <div class="mb-3">
+            <label asp-for="Price50"></label>
+            <input asp-for="Price50" type="number" class="form-control border-2 bg-black text-white" id="Price50" disabled />
+            <input type="hidden" asp-for="Price50" id="Price50Hidden" />
+            <span asp-validation-for="Price50" class="text-danger"></span>
+        </div>
+
+
+        <div class="mb-3">
+            <label asp-for="Price100"></label>
+            <input asp-for="Price100" type="number" class="form-control border-2 bg-black text-white" id="Price100" disabled />
+            <input type="hidden" asp-for="Price100" id="Price100Hidden" />
+            <span asp-validation-for="Price100" class="text-danger"></span>
+        </div>
+
+        <script>
+            function updatePrices() {
+
+                var listPrice = document.getElementById('ListPrice').value;
+
+                if (!isNaN(listPrice)) {
+
+
+                    var price = (listPrice - (listPrice * 0.15)).toFixed(2);
+                    var price50 = (listPrice - (listPrice * 0.10)).toFixed(2);
+                    var price100 = (listPrice - (listPrice * 0.20)).toFixed(2);
+
+
+                   document.getElementById('Price').value = price;
+                   document.getElementById('Price50').value = price50;
+                   document.getElementById('Price100').value = price100;
+
+
+                   document.getElementById('PriceHidden').value = price;
+                   document.getElementById('Price50Hidden').value = price50;
+                   document.getElementById('Price100Hidden').value = price100;
+                }
+
+                else {
+
+                    document.getElementById('Price').value = '';
+                    document.getElementById('Price50').value = '';
+                    document.getElementById('Price100').value = '';
+
+                    document.getElementById('PriceHidden').value = '';
+                    document.getElementById('Price50Hidden').value = '';
+                    document.getElementById('Price100Hidden').value = '';
+                }
+            }
+
+
+            window.onload = function() {
+                updatePrices();
+            };
+        </script>
+
+    </div>
+
+    <button type="submit" class="btn btn-danger" style="width:150px">Sil</button>
+    <a asp-controller="Product" asp-action="Index" class="btn btn-primary bg-black" style="width:150px">
+        Listeye Dön
+    </a>
+</form>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}

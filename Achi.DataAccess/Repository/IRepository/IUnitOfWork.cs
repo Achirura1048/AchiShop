@@ -11,6 +11,12 @@ namespace Achi.DataAccess.Repository.IRepository
     {
         ICategoryRepository Category { get; }
         IProductRepository Product { get; }
+        ICompanyRepository Company { get; }
+        ICountryRepository Country { get; }
+        IStateRepository State { get; }
+        ICityRepository City { get; }
+
+        Task SaveAsync();
 
         void Save();
     }

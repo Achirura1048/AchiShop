@@ -52,7 +52,7 @@ namespace Achi.DataAccess.Repository
                     query = query.Include(includeProperty);
                 }
             }
-            return query.ToList();
+            return [.. query];
         }
 
         public void Remove(T entity)

@@ -1,0 +1,155 @@
+﻿@model CompanyUpsertVM
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    </head>
+<div class="border p-3 mt-4 text-white mb-3">
+    <div class="row pb-2">
+        <h1 class="text-white">@(Model.Company.ID != 0 ? "Şirket Detay Güncelle" : "Şirket Ekle")</h1>
+        </hr>
+    </div>
+</div>
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+<form asp-action="Upsert" method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        <label asp-for="Company.Name">Company Name</label>
+        <input asp-for="Company.Name" class="form-control" />
+        <span asp-validation-for="Company.Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Company.Adress">Company Address</label>
+        <input asp-for="Company.Adress" class="form-control" />
+        <span asp-validation-for="Company.Adress" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Company.PhoneNumber">Phone Number</label>
+        <input asp-for="Company.PhoneNumber" class="form-control" />
+        <span asp-validation-for="Company.PhoneNumber" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="SelectedCountryCode"></label>
+        <select asp-for="SelectedCountryCode" asp-items="Model.CountryList" class="form-control" id="SelectedCountryCode">
+            <option value="">Select Country</option>
+        </select>
+        <span asp-validation-for="SelectedCountryCode" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="SelectedStateCode"></label>
+        <select asp-for="SelectedStateCode" asp-items="Model.StateList" class="form-control" id="SelectedStateCode">
+            <option value="">Select State</option>
+        </select>
+        <span asp-validation-for="SelectedStateCode" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="SelectedCityName"></label>
+        <select asp-for="SelectedCityName" asp-items="Model.CityList" class="form-control" id="SelectedCityName">
+            <option value="">Select City</option>
+        </select>
+        <span asp-validation-for="SelectedCityName" class="text-danger"></span>
+    </div>
+
+
+
+    @if (Model.Company.ID != 0)
+    {
+        <button type="submit" class="btn btn-primary bg-black" style="width:150px">Güncelle</button>
+    }
+    else
+    {
+        <button type="submit" class="btn btn-primary bg-black" style="width:150px">Oluştur</button>
+    }
+
+    <a asp-controller="Company" asp-action="Index" class="btn btn-primary bg-black" style="width:150px">
+        Listeye Dön
+    </a>
+</form>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+
+        <script>
+            $(document).ready(function () {
+                // When country changes, load states
+                $('#SelectedCountryCode').change(function () {
+                    var countryCode = $(this).val();
+                    var stateSelect = $('#SelectedStateCode');
+                    var citySelect = $('#SelectedCityName');
+
+                    // Clear states and cities
+                    stateSelect.empty().append('<option value="">Select State</option>');
+                    citySelect.empty().append('<option value="">Select City</option>');
+
+                    if (countryCode) {
+                        $.ajax({
+                            url: '@Url.Action("GetStates", "Company", new { area = "Admin" })',
+                            type: 'GET',
+                            data: { countryCode: countryCode },
+                            success: function (data) {
+                                $.each(data, function (i, item) {
+                                    stateSelect.append($('<option>', {
+                                        value: item.value,
+                                        text: item.text
+                                    }));
+                                });
+                            },
+                            error: function (xhr, status, error) {
+                                console.error('Error loading states:', error);
+                            }
+                        });
+                    }
+                });
+
+                // When state changes, load cities
+                $('#SelectedStateCode').change(function () {
+                    var countryCode = $('#SelectedCountryCode').val();
+                    var stateCode = $(this).val();
+                    var citySelect = $('#SelectedCityName');
+
+                    // Clear cities
+                    citySelect.empty().append('<option value="">Select City</option>');
+
+                    if (countryCode && stateCode) {
+                        $.ajax({
+                            url: '@Url.Action("GetCities", "Company", new { area = "Admin" })',
+                            type: 'GET',
+                            data: {
+                                countryCode: countryCode,
+                                stateCode: stateCode
+                            },
+                            success: function (data) {
+                                $.each(data, function (i, item) {
+                                    citySelect.append($('<option>', {
+                                        value: item.value,
+                                        text: item.text
+                                    }));
+                                });
+                            },
+                            error: function (xhr, status, error) {
+                                console.error('Error loading cities:', error);
+                            }
+                        });
+                    }
+                });
+            });
+
+            // Initialize TinyMCE editor
+            tinymce.init({
+              selector: 'textarea#tiny',
+              skin: "oxide-dark",
+              content_css: "dark"
+            });
+           
+
+        </script>
+    }
+
+}

@@ -202,17 +202,12 @@ namespace E_Ticaret.Areas.Admin.Controllers
                 return NotFound(); 
             }
 
-            
-            var relatedProducts = _UoW.Product.GetAll(includeProperties: "Category")
-                .Where(p => p.CategoryID == product.CategoryID && p.ID != id) 
-                .Take(4) 
-                .ToList();
 
 
             var viewModel = new ProductVM
             {
                 Product = product,
-                RelatedProducts = relatedProducts ?? new List<Product>()
+               
             };
 
 

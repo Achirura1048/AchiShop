@@ -6,7 +6,7 @@ namespace Achi.Models
     public class Category
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        
         public int ID { get; set; }
 
         [Required(ErrorMessage = "Bu Alan Boş Bırakılamaz")]
@@ -16,5 +16,7 @@ namespace Achi.Models
         [Display(Name = "Görüntüleme Sırası")]
         [DeniedValues(0, ErrorMessage = "Sıfır Değeri Kullanılamaz")]
         public int DisplayOrder { get; set; }
+
+        public string SINAV { get; set; }
     }
 }
